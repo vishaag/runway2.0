@@ -43,3 +43,15 @@ Contributions, issues, and feature requests are welcome. Feel free to check issu
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Deployment
+
+This application is configured for deployment on Vercel. To deploy:
+
+1. Install the Vercel CLI: `npm i -g vercel`
+2. Run `vercel login` and follow the prompts to log in to your Vercel account
+3. In the project root directory, run `vercel` to deploy
+4. Follow the prompts to link your project to a Vercel project
+5. Once deployed, Vercel will provide you with a URL for your application
+
+For subsequent deployments, simply run `vercel` in the project root.
