@@ -26,5 +26,9 @@
   "SGD": {
     "name": "Singapore Dollar",
     "symbol": "$"
+  },
+  "VND": {
+    "name": "Vietnamese Dong",
+    "symbol": "₫"
   }
 }
