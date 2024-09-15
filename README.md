@@ -55,3 +55,7 @@ This application is configured for deployment on Vercel. To deploy:
 5. Once deployed, Vercel will provide you with a URL for your application
 
 For subsequent deployments, simply run `vercel` in the project root.
+
+## Social Media Sharing
+
+This app includes Open Graph meta tags for rich sharing on social media platforms. The OG image (`og-image.png`) is located in the `public` folder and is set to be displayed when the app URL is shared on platforms like Facebook, Twitter, and LinkedIn.
