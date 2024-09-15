@@ -1,0 +1,30 @@
+{
+  "USD": {
+    "name": "US Dollar",
+    "symbol": "$"
+  },
+  "CAD": {
+    "name": "Canadian Dollar",
+    "symbol": "$"
+  },
+  "EUR": {
+    "name": "Euro",
+    "symbol": "€"
+  },
+  "GBP": {
+    "name": "British Pound",
+    "symbol": "£"
+  },
+  "JPY": {
+    "name": "Japanese Yen",
+    "symbol": "¥"
+  },
+  "INR": {
+    "name": "Indian Rupee",
+    "symbol": "₹"
+  },
+  "SGD": {
+    "name": "Singapore Dollar",
+    "symbol": "$"
+  }
+}

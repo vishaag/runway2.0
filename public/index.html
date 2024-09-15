@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Runway Calculator</title>
+  <link rel="stylesheet" href="/tailwind.css">
+  <style>
+    /* Styles that can't be easily replaced with Tailwind classes */
+    .currency-symbol {
+      position: absolute;
+      left: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .currency-input {
+      padding-left: 1.75rem;
+    }
+
+    @media (min-width: 1024px) {
+      .desktop-container {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .content-container {
+        height: 100vh;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen">
+  <div class="flex flex-col lg:flex-row desktop-container">
+    <div class="w-full lg:w-1/5 bg-white shadow-xl p-4 lg:p-6 flex flex-col overflow-auto">
+      <h1 class="text-xl md:text-2xl font-bold text-center text-blue-600 mb-4">Financial Runway Calculator</h1>
+      <form class="space-y-4 flex-grow">
+        <div class="flex flex-col">
+          <label for="currency" class="text-sm font-semibold text-gray-700 mb-1">Currency</label>
+          <select id="currency" name="currency"
+            class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <label for="networth" class="text-sm font-semibold text-gray-700 mb-1">Networth (Liquid Assets)</label>
+            <div class="relative">
+              <span class="currency-symbol inline-block" style="width: fit-content;"></span>
+              <input type="text" inputmode="numeric" id="networth" name="networth"
+                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <label for="monthly_expenses" class="text-sm font-semibold text-gray-700 mb-1">Monthly Expenses</label>
+            <div class="relative">
+              <span class="currency-symbol"></span>
+              <input type="text" inputmode="numeric" id="monthly_expenses" name="monthly_expenses"
+                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <label for="return_rate" class="text-sm font-semibold text-gray-700 mb-1">Expected Return Rate (%)</label>
+            <input type="text" inputmode="numeric" id="return_rate" name="return_rate"
+              class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div class="flex flex-col">
+            <label for="inflation" class="text-sm font-semibold text-gray-700 mb-1">Expected Inflation (%)</label>
+            <input type="text" inputmode="numeric" id="inflation" name="inflation"
+              class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          </div>
+        </div>
+        <div class="flex justify-center mt-4">
+          <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-base transition duration-300 shadow-md hover:shadow-lg">
+            Calculate
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="w-full lg:w-4/5 bg-white shadow-xl flex flex-col lg:flex-row content-container">
+      <div class="w-full lg:w-[45%] p-4 md:p-8 overflow-hidden flex flex-col">
+        <h2 class="text-xl font-bold text-blue-600 mb-4">Financial Projection</h2>
+        <div class="flex-grow overflow-y-auto">
+          <table class="w-full border-collapse">
+            <thead class="sticky top-0 bg-gray-100 shadow-sm">
+              <tr>
+                <th class="border px-4 py-2 text-left">Year</th>
+                <th class="border px-4 py-2 text-left">Withdrawal</th>
+                <th class="border px-4 py-2 text-left">Networth</th>
+              </tr>
+            </thead>
+            <tbody id="projectionTableBody">
+              <!-- Table rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="w-full lg:w-[55%] p-4 md:p-8 flex flex-col">
+        <h2 class="text-xl font-bold text-blue-600 mb-4">Financial Projection Chart</h2>
+        <div class="flex-grow relative" style="max-height: 350px;">
+          <canvas id="chart-container" class="w-full h-full"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/script.js"></script>
+</body>
+
+</html>
