@@ -105,8 +105,14 @@
             </div>
           </div>
           <div class="flex flex-col">
-            <label for="monthly_income" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Monthly
-              Income (<i>Inflation-Adjusted</i>)</label>
+            <label for="monthly_income" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              Monthly Income
+              <span class="inline-flex items-center ml-2">
+                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">(Inflation-Adjusted</span>
+                <input type="checkbox" id="income_inflation_adjusted" name="income_inflation_adjusted" checked
+                  class="form-checkbox h-5 w-5 text-blue-600 transition duration-150 ease-in-out">&nbsp;)
+              </span>
+            </label>
             <div class="relative">
               <span class="currency-symbol"></span>
               <input type="text" inputmode="numeric" id="monthly_income" name="monthly_income"

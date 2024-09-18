@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   let selectedCurrency = { symbol: '₹', code: 'INR' }; // Default currency symbol and code
   let chart;
+  let incomeInflationAdjusted = true;
 
   // Function to save data to local storage
   function saveToLocalStorage() {
@@ -241,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    incomeInflationAdjusted = document.getElementById('income_inflation_adjusted').checked;
     toggleIncomeColumn(monthlyIncome > 0);
     updateProjectionTable();
     saveToLocalStorage();
@@ -317,7 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Increase withdrawal and income for next year due to inflation
       currentWithdrawal = currentWithdrawal * (1 + inflation);
-      currentIncome = currentIncome * (1 + inflation);
+      if (incomeInflationAdjusted) {
+        currentIncome = currentIncome * (1 + inflation);
+      }
       
       // Add data point for chart
       labels.push(`Year ${year}`);
