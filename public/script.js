@@ -24,11 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const data = JSON.parse(storedData);
         
-        // Check if all required fields are present
+        // Check if all required fields are present and not NaN
         const requiredFields = ['currency', 'networth', 'monthlyExpenses', 'monthlyIncome', 'returnRate', 'inflation'];
-        const allFieldsPresent = requiredFields.every(field => data.hasOwnProperty(field));
+        const allFieldsValid = requiredFields.every(field => {
+          const value = data[field];
+          return value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value));
+        });
         
-        if (allFieldsPresent) {
+        if (allFieldsValid) {
           document.getElementById('currency').value = data.currency;
           selectedCurrency.code = data.currency;
           
@@ -71,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           toggleIncomeColumn(monthlyIncome > 0);
         } else {
-          console.log('Some fields are missing in stored data. Using default values.');
+          console.log('Some fields are missing or invalid in stored data. Using default values.');
           setDefaultValues();
         }
       } catch (error) {
@@ -228,6 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    toggleIncomeColumn(monthlyIncome > 0);
     updateProjectionTable();
     saveToLocalStorage();
   });
