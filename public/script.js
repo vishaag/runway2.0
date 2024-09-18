@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       row.innerHTML = `
         <td class="border px-4 py-2">${year}</td>
-        ${showIncomeColumn ? `<td class="border px-4 py-2 income-row">${selectedCurrency.symbol}${formattedIncome}</td>` : ''}
+        <td class="border px-4 py-2 income-row ${showIncomeColumn ? '' : 'hidden'}">${selectedCurrency.symbol}${formattedIncome}</td>
         <td class="border px-4 py-2">${selectedCurrency.symbol}${formattedWithdrawal}</td>
         <td class="border px-4 py-2">${selectedCurrency.symbol}${formattedNetworth}</td>
       `;
@@ -412,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formatNumberInput(e.target);
     const monthlyIncome = parseFormattedNumber(e.target.value);
     toggleIncomeColumn(monthlyIncome > 0);
+    updateProjectionTable(); // Trigger recalculation
     saveToLocalStorage();
   });
 
