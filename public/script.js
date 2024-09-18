@@ -58,7 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('inflation').value = data.inflation;
           
           // Check if all required table columns are present
-          const requiredColumns = ['Year', 'Annual Income', 'Withdrawal', 'Networth'];
+          const requiredColumns = ['Year', 'Withdrawal', 'Networth'];
+          if (monthlyIncome > 0) {
+            requiredColumns.push('Annual Income');
+          }
           const tableHeader = document.querySelector('thead tr');
           const existingColumns = Array.from(tableHeader.children).map(th => th.textContent.trim());
           const allColumnsPresent = requiredColumns.every(col => existingColumns.includes(col));
