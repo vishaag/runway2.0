@@ -407,16 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add event listener for window resize
   window.addEventListener('resize', handleResize);
 
-  // Add event listener for the monthly income input
-  document.getElementById('monthly_income').addEventListener('input', (e) => {
-    formatNumberInput(e.target);
-    const monthlyIncome = parseFormattedNumber(e.target.value);
-    toggleIncomeColumn(monthlyIncome > 0);
-    updateProjectionTable(); // Trigger recalculation
-    saveToLocalStorage();
-  });
-
-  // Add this function at the beginning of your script
+  // Modify the toggleIncomeColumn function
   function toggleIncomeColumn(show) {
     const incomeHeader = document.querySelector('.income-column');
     const incomeRows = document.querySelectorAll('.income-row');
