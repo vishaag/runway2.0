@@ -65,18 +65,20 @@ document.addEventListener('DOMContentLoaded', () => {
           
           if (allColumnsPresent && data.tableData) {
             document.getElementById('projectionTableBody').innerHTML = data.tableData;
+            toggleIncomeColumn(monthlyIncome > 0);
+            console.log('Loaded table data from local storage.');
           } else {
-            console.log('Table structure has changed. Recreating projection table.');
+            console.log('Table structure has changed or data is missing. Recreating projection table.');
             updateProjectionTable();
           }
 
           if (data.chartData) {
             createChart(data.chartData.labels, data.chartData.datasets[0].data);
+            console.log('Loaded chart data from local storage.');
           } else {
-            updateProjectionTable(); // Create new projection if chart data is missing
+            console.log('Chart data not found in local storage. Recreating chart.');
+            updateProjectionTable();
           }
-
-          toggleIncomeColumn(monthlyIncome > 0);
         } else {
           console.log('Some fields are missing or invalid in stored data. Using default values.');
           setDefaultValues();
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setDefaultValues();
       }
     } else {
+      console.log('No stored data found. Using default values.');
       setDefaultValues();
     }
   }
@@ -191,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Format the integer part with commas
     if (selectedCurrency.code === 'INR') {
-      parts[0] = formatIndianNumber(parts[0]);
+      parts[0] = parts[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
     } else {
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
