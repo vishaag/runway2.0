@@ -159,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
       currencySelect.addEventListener('change', () => {
         updateCurrencySymbol();
         updateProjectionTable();
-        saveToLocalStorage();
       });
 
       // Load data from local storage or set defaults after populating currency options
@@ -199,12 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
     input.value = parts.join('.');
   };
 
-  // Add event listeners to all numeric inputs
+  // Modify the event listeners for numeric inputs
   const numericInputs = document.querySelectorAll('input[inputmode="numeric"]');
   numericInputs.forEach(input => {
     input.addEventListener('input', () => {
       formatNumberInput(input);
-      saveToLocalStorage();
     });
   });
 
@@ -326,9 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create or update chart
     createChart(labels, data);
-
-    // Save to local storage after updating
-    saveToLocalStorage();
   }
 
   // Function to create the chart
@@ -392,9 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       chart.resize();
     }, 0);
-
-    // Save to local storage after creating/updating chart
-    saveToLocalStorage();
   }
 
   // Function to handle window resize
