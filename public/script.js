@@ -23,31 +23,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (storedData) {
       try {
         const data = JSON.parse(storedData);
-        document.getElementById('currency').value = data.currency || 'INR';
-        selectedCurrency.code = data.currency || 'INR'; // Update the selectedCurrency
         
-        // Remove commas and parse as float before formatting, use default values if not present
-        const networth = parseFloat(data.networth?.replace(/,/g, '') || '10000000');
-        const monthlyExpenses = parseFloat(data.monthlyExpenses?.replace(/,/g, '') || '75000');
-        const monthlyIncome = parseFloat(data.monthlyIncome?.replace(/,/g, '') || '0');
+        // Check if all required fields are present
+        const requiredFields = ['currency', 'networth', 'monthlyExpenses', 'monthlyIncome', 'returnRate', 'inflation'];
+        const allFieldsPresent = requiredFields.every(field => data.hasOwnProperty(field));
         
-        if (selectedCurrency.code === 'INR') {
-          document.getElementById('networth').value = formatIndianNumber(networth.toFixed(0));
-          document.getElementById('monthly_expenses').value = formatIndianNumber(monthlyExpenses.toFixed(0));
-          document.getElementById('monthly_income').value = formatIndianNumber(monthlyIncome.toFixed(0));
+        if (allFieldsPresent) {
+          document.getElementById('currency').value = data.currency;
+          selectedCurrency.code = data.currency;
+          
+          // Remove commas and parse as float before formatting
+          const networth = parseFloat(data.networth.replace(/,/g, ''));
+          const monthlyExpenses = parseFloat(data.monthlyExpenses.replace(/,/g, ''));
+          const monthlyIncome = parseFloat(data.monthlyIncome.replace(/,/g, ''));
+          
+          if (data.currency === 'INR') {
+            document.getElementById('networth').value = formatIndianNumber(networth.toFixed(0));
+            document.getElementById('monthly_expenses').value = formatIndianNumber(monthlyExpenses.toFixed(0));
+            document.getElementById('monthly_income').value = formatIndianNumber(monthlyIncome.toFixed(0));
+          } else {
+            document.getElementById('networth').value = networth.toLocaleString('en-US');
+            document.getElementById('monthly_expenses').value = monthlyExpenses.toLocaleString('en-US');
+            document.getElementById('monthly_income').value = monthlyIncome.toLocaleString('en-US');
+          }
+          
+          document.getElementById('return_rate').value = data.returnRate;
+          document.getElementById('inflation').value = data.inflation;
+          document.getElementById('projectionTableBody').innerHTML = data.tableData || '';
+          if (data.chartData) {
+            createChart(data.chartData.labels, data.chartData.datasets[0].data);
+          } else {
+            updateProjectionTable(); // Create new projection if chart data is missing
+          }
+
+          toggleIncomeColumn(monthlyIncome > 0);
         } else {
-          document.getElementById('networth').value = networth.toLocaleString('en-US');
-          document.getElementById('monthly_expenses').value = monthlyExpenses.toLocaleString('en-US');
-          document.getElementById('monthly_income').value = monthlyIncome.toLocaleString('en-US');
-        }
-        
-        document.getElementById('return_rate').value = data.returnRate || '8';
-        document.getElementById('inflation').value = data.inflation || '6';
-        document.getElementById('projectionTableBody').innerHTML = data.tableData || '';
-        if (data.chartData) {
-          createChart(data.chartData.labels, data.chartData.datasets[0].data);
-        } else {
-          updateProjectionTable(); // Create new projection if chart data is missing
+          console.log('Some fields are missing in stored data. Using default values.');
+          setDefaultValues();
         }
       } catch (error) {
         console.error('Error parsing stored data:', error);
@@ -80,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Update the projection table and chart with default values
     updateProjectionTable();
+
+    toggleIncomeColumn(false); // Hide income column by default
   }
 
   // Fetch currencies from JSON file
@@ -221,6 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const returnRate = parseFloat(document.getElementById('return_rate').value) / 100;
     const inflation = parseFloat(document.getElementById('inflation').value) / 100;
 
+    const showIncomeColumn = monthlyIncome > 0;
+    toggleIncomeColumn(showIncomeColumn);
+
     const maxYears = 100;
     const data = [];
     const labels = [];
@@ -254,17 +271,20 @@ document.addEventListener('DOMContentLoaded', () => {
         row.classList.add('bg-yellow-100');
       }
 
-      let formattedWithdrawal, formattedNetworth;
+      let formattedIncome, formattedWithdrawal, formattedNetworth;
       if (selectedCurrency.code === 'INR') {
+        formattedIncome = formatIndianNumber(currentIncome.toFixed(0));
         formattedWithdrawal = formatIndianNumber(currentWithdrawal.toFixed(0));
         formattedNetworth = formatIndianNumber(currentNetworth.toFixed(0));
       } else {
+        formattedIncome = currentIncome.toLocaleString(undefined, {maximumFractionDigits: 0});
         formattedWithdrawal = currentWithdrawal.toLocaleString(undefined, {maximumFractionDigits: 0});
         formattedNetworth = currentNetworth.toLocaleString(undefined, {maximumFractionDigits: 0});
       }
 
       row.innerHTML = `
         <td class="border px-4 py-2">${year}</td>
+        ${showIncomeColumn ? `<td class="border px-4 py-2 income-row">${selectedCurrency.symbol}${formattedIncome}</td>` : ''}
         <td class="border px-4 py-2">${selectedCurrency.symbol}${formattedWithdrawal}</td>
         <td class="border px-4 py-2">${selectedCurrency.symbol}${formattedNetworth}</td>
       `;
@@ -374,7 +394,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add event listener for window resize
   window.addEventListener('resize', handleResize);
 
-  // Don't call updateProjectionTable() here, as we're loading from local storage
+  // Add event listener for the monthly income input
+  document.getElementById('monthly_income').addEventListener('input', (e) => {
+    formatNumberInput(e.target);
+    const monthlyIncome = parseFormattedNumber(e.target.value);
+    toggleIncomeColumn(monthlyIncome > 0);
+    saveToLocalStorage();
+  });
+
+  // Add this function at the beginning of your script
+  function toggleIncomeColumn(show) {
+    const incomeHeader = document.querySelector('.income-column');
+    const incomeRows = document.querySelectorAll('.income-row');
+    
+    if (show) {
+      incomeHeader.classList.remove('hidden');
+      incomeRows.forEach(row => row.classList.remove('hidden'));
+    } else {
+      incomeHeader.classList.add('hidden');
+      incomeRows.forEach(row => row.classList.add('hidden'));
+    }
+  }
 });
 
 // Function to parse formatted number input
