@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currency').value = data.currency || 'INR';
         selectedCurrency.code = data.currency || 'INR'; // Update the selectedCurrency
         
-        // Remove commas and parse as float before formatting
-        const networth = parseFloat(data.networth?.replace(/,/g, '') || '0');
-        const monthlyExpenses = parseFloat(data.monthlyExpenses?.replace(/,/g, '') || '0');
+        // Remove commas and parse as float before formatting, use default values if not present
+        const networth = parseFloat(data.networth?.replace(/,/g, '') || '10000000');
+        const monthlyExpenses = parseFloat(data.monthlyExpenses?.replace(/,/g, '') || '75000');
         const monthlyIncome = parseFloat(data.monthlyIncome?.replace(/,/g, '') || '0');
         
-        if (data.currency === 'INR') {
+        if (selectedCurrency.code === 'INR') {
           document.getElementById('networth').value = formatIndianNumber(networth.toFixed(0));
           document.getElementById('monthly_expenses').value = formatIndianNumber(monthlyExpenses.toFixed(0));
           document.getElementById('monthly_income').value = formatIndianNumber(monthlyIncome.toFixed(0));
@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('projectionTableBody').innerHTML = data.tableData || '';
         if (data.chartData) {
           createChart(data.chartData.labels, data.chartData.datasets[0].data);
+        } else {
+          updateProjectionTable(); // Create new projection if chart data is missing
         }
       } catch (error) {
         console.error('Error parsing stored data:', error);
