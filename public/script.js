@@ -24,11 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const data = JSON.parse(storedData);
         
-        // Check if all required fields are present and not NaN
+        // Check if all required fields are present and valid
         const requiredFields = ['currency', 'networth', 'monthlyExpenses', 'monthlyIncome', 'returnRate', 'inflation'];
         const allFieldsValid = requiredFields.every(field => {
           const value = data[field];
-          return value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value));
+          if (field === 'currency') {
+            return value !== undefined && value !== null && value !== '';
+          } else {
+            return value !== undefined && value !== null && value !== '' && !isNaN(parseFloat(value));
+          }
         });
         
         if (allFieldsValid) {
