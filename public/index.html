@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 
 <head>
   <meta charset="UTF-8">
@@ -47,46 +47,83 @@
   <meta property="twitter:description"
     content="Calculate how long your current liquid assets will last based on expenses, return rate, and inflation.">
   <meta property="twitter:image" content="https://runway2-0.vercel.app/og-image.png">
+
+  <script>
+    // Check for saved theme preference or use system preference
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
 </head>
 
-<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen">
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-900 min-h-screen relative">
+  <!-- Dark mode toggle button -->
+  <button id="theme-toggle" class="fixed top-4 right-4 z-50 p-2 rounded-md bg-gray-200 dark:bg-gray-700">
+    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+    </svg>
+    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+      xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+        fill-rule="evenodd" clip-rule="evenodd"></path>
+    </svg>
+  </button>
+
   <div class="flex flex-col lg:flex-row desktop-container">
-    <div class="w-full lg:w-1/5 bg-white shadow-xl p-4 lg:p-6 flex flex-col overflow-auto">
-      <h1 class="text-xl md:text-2xl font-bold text-center text-blue-600 mb-4">Financial Runway Calculator</h1>
+    <div class="w-full lg:w-1/5 bg-white dark:bg-gray-800 shadow-xl p-4 lg:p-6 flex flex-col overflow-auto">
+      <h1 class="text-xl md:text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-4">Financial Runway
+        Calculator</h1>
       <form class="space-y-4 flex-grow">
         <div class="flex flex-col">
-          <label for="currency" class="text-sm font-semibold text-gray-700 mb-1">Currency</label>
+          <label for="currency" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Currency</label>
           <select id="currency" name="currency"
-            class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            class="px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             <!-- Options will be populated by JavaScript -->
           </select>
         </div>
         <div class="grid grid-cols-1 gap-4">
           <div class="flex flex-col">
-            <label for="networth" class="text-sm font-semibold text-gray-700 mb-1">Networth (Liquid Assets)</label>
+            <label for="networth" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Networth (Liquid
+              Assets)</label>
             <div class="relative">
               <span class="currency-symbol inline-block" style="width: fit-content;"></span>
               <input type="text" inputmode="numeric" id="networth" name="networth"
-                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
           </div>
           <div class="flex flex-col">
-            <label for="monthly_expenses" class="text-sm font-semibold text-gray-700 mb-1">Monthly Expenses</label>
+            <label for="monthly_expenses" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Monthly
+              Expenses</label>
             <div class="relative">
               <span class="currency-symbol"></span>
               <input type="text" inputmode="numeric" id="monthly_expenses" name="monthly_expenses"
-                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
           </div>
           <div class="flex flex-col">
-            <label for="return_rate" class="text-sm font-semibold text-gray-700 mb-1">Expected Return Rate (%)</label>
-            <input type="text" inputmode="numeric" id="return_rate" name="return_rate"
-              class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <label for="monthly_income" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Monthly
+              Income</label>
+            <div class="relative">
+              <span class="currency-symbol"></span>
+              <input type="text" inputmode="numeric" id="monthly_income" name="monthly_income"
+                class="currency-input px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
           </div>
           <div class="flex flex-col">
-            <label for="inflation" class="text-sm font-semibold text-gray-700 mb-1">Expected Inflation (%)</label>
+            <label for="return_rate" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Expected Return
+              Rate (%)</label>
+            <input type="text" inputmode="numeric" id="return_rate" name="return_rate"
+              class="px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div class="flex flex-col">
+            <label for="inflation" class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Expected
+              Inflation (%)</label>
             <input type="text" inputmode="numeric" id="inflation" name="inflation"
-              class="px-3 py-1.5 w-full text-base bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+              class="px-3 py-1.5 w-full text-base bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500">
           </div>
         </div>
         <div class="flex justify-center mt-4">
@@ -97,12 +134,12 @@
         </div>
       </form>
     </div>
-    <div class="w-full lg:w-4/5 bg-white shadow-xl flex flex-col lg:flex-row content-container">
+    <div class="w-full lg:w-4/5 bg-white dark:bg-gray-800 shadow-xl flex flex-col lg:flex-row content-container">
       <div class="w-full lg:w-[45%] p-4 md:p-8 overflow-hidden flex flex-col">
-        <h2 class="text-xl font-bold text-blue-600 mb-4">Financial Projection</h2>
+        <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">Financial Projection</h2>
         <div class="flex-grow overflow-y-auto">
           <table class="w-full border-collapse">
-            <thead class="sticky top-0 bg-gray-100 shadow-sm">
+            <thead class="sticky top-0 bg-gray-100 dark:bg-gray-700 shadow-sm">
               <tr>
                 <th class="border px-4 py-2 text-left">Year</th>
                 <th class="border px-4 py-2 text-left">Withdrawal</th>
@@ -116,14 +153,54 @@
         </div>
       </div>
       <div class="w-full lg:w-[55%] p-4 md:p-8 flex flex-col">
-        <h2 class="text-xl font-bold text-blue-600 mb-4">Financial Projection Chart</h2>
+        <h2 class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4">Financial Projection Chart</h2>
         <div class="flex-grow relative" style="max-height: 350px;">
           <canvas id="chart-container" class="w-full h-full"></canvas>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Floating button for X (Twitter) link -->
+  <div class="fixed bottom-0 right-0 m-4 z-[9999]">
+    <a href="https://x.com/vishaag" target="_blank" rel="noopener noreferrer"
+      class="block bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 min-w-[40px] min-h-[40px] flex items-center justify-center">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z">
+        </path>
+      </svg>
+    </a>
+  </div>
+
   <script src="/script.js"></script>
+  <script>
+    // Dark mode toggle functionality
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+    function setTheme(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        themeToggleLightIcon.classList.remove('hidden');
+        themeToggleDarkIcon.classList.add('hidden');
+        localStorage.theme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        themeToggleLightIcon.classList.add('hidden');
+        themeToggleDarkIcon.classList.remove('hidden');
+        localStorage.theme = 'light';
+      }
+    }
+
+    // Set initial icon state
+    setTheme(document.documentElement.classList.contains('dark'));
+
+    themeToggleBtn.addEventListener('click', () => {
+      setTheme(!document.documentElement.classList.contains('dark'));
+    });
+  </script>
 </body>
 
 </html>

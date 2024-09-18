@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currency: document.getElementById('currency').value,
       networth: document.getElementById('networth').value.replace(/,/g, ''),
       monthlyExpenses: document.getElementById('monthly_expenses').value.replace(/,/g, ''),
+      monthlyIncome: document.getElementById('monthly_income').value.replace(/,/g, ''),
       returnRate: document.getElementById('return_rate').value,
       inflation: document.getElementById('inflation').value,
       tableData: document.getElementById('projectionTableBody').innerHTML,
@@ -20,48 +21,63 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadFromLocalStorageOrSetDefaults() {
     const storedData = localStorage.getItem('financialRunwayData');
     if (storedData) {
-      const data = JSON.parse(storedData);
-      document.getElementById('currency').value = data.currency;
-      selectedCurrency.code = data.currency; // Update the selectedCurrency
-      
-      // Remove commas and parse as float before formatting
-      const networth = parseFloat(data.networth.replace(/,/g, ''));
-      const monthlyExpenses = parseFloat(data.monthlyExpenses.replace(/,/g, ''));
-      
-      if (data.currency === 'INR') {
-        document.getElementById('networth').value = formatIndianNumber(networth.toFixed(0));
-        document.getElementById('monthly_expenses').value = formatIndianNumber(monthlyExpenses.toFixed(0));
-      } else {
-        document.getElementById('networth').value = networth.toLocaleString('en-US');
-        document.getElementById('monthly_expenses').value = monthlyExpenses.toLocaleString('en-US');
-      }
-      
-      document.getElementById('return_rate').value = data.returnRate;
-      document.getElementById('inflation').value = data.inflation;
-      document.getElementById('projectionTableBody').innerHTML = data.tableData;
-      if (data.chartData) {
-        createChart(data.chartData.labels, data.chartData.datasets[0].data);
+      try {
+        const data = JSON.parse(storedData);
+        document.getElementById('currency').value = data.currency || 'INR';
+        selectedCurrency.code = data.currency || 'INR'; // Update the selectedCurrency
+        
+        // Remove commas and parse as float before formatting
+        const networth = parseFloat(data.networth?.replace(/,/g, '') || '0');
+        const monthlyExpenses = parseFloat(data.monthlyExpenses?.replace(/,/g, '') || '0');
+        const monthlyIncome = parseFloat(data.monthlyIncome?.replace(/,/g, '') || '0');
+        
+        if (data.currency === 'INR') {
+          document.getElementById('networth').value = formatIndianNumber(networth.toFixed(0));
+          document.getElementById('monthly_expenses').value = formatIndianNumber(monthlyExpenses.toFixed(0));
+          document.getElementById('monthly_income').value = formatIndianNumber(monthlyIncome.toFixed(0));
+        } else {
+          document.getElementById('networth').value = networth.toLocaleString('en-US');
+          document.getElementById('monthly_expenses').value = monthlyExpenses.toLocaleString('en-US');
+          document.getElementById('monthly_income').value = monthlyIncome.toLocaleString('en-US');
+        }
+        
+        document.getElementById('return_rate').value = data.returnRate || '8';
+        document.getElementById('inflation').value = data.inflation || '6';
+        document.getElementById('projectionTableBody').innerHTML = data.tableData || '';
+        if (data.chartData) {
+          createChart(data.chartData.labels, data.chartData.datasets[0].data);
+        }
+      } catch (error) {
+        console.error('Error parsing stored data:', error);
+        setDefaultValues();
       }
     } else {
-      // Set default values
-      document.getElementById('currency').value = 'INR';
-      document.getElementById('networth').value = '10,000,000';
-      document.getElementById('monthly_expenses').value = '75,000';
-      document.getElementById('return_rate').value = '8';
-      document.getElementById('inflation').value = '6';
-
-      // Format default values based on selected currency
-      if (selectedCurrency.code === 'INR') {
-        document.getElementById('networth').value = formatIndianNumber(10000000);
-        document.getElementById('monthly_expenses').value = formatIndianNumber(75000);
-      } else {
-        document.getElementById('networth').value = (10000000).toLocaleString('en-US');
-        document.getElementById('monthly_expenses').value = (75000).toLocaleString('en-US');
-      }
-      
-      // Update the projection table and chart with default values
-      updateProjectionTable();
+      setDefaultValues();
     }
+  }
+
+  // Helper function to set default values
+  function setDefaultValues() {
+    document.getElementById('currency').value = 'INR';
+    document.getElementById('networth').value = '10,000,000';
+    document.getElementById('monthly_expenses').value = '75,000';
+    document.getElementById('monthly_income').value = '0';
+    document.getElementById('return_rate').value = '8';
+    document.getElementById('inflation').value = '6';
+
+    // Format default values based on selected currency
+    if (selectedCurrency.code === 'INR') {
+      document.getElementById('networth').value = formatIndianNumber(10000000);
+      document.getElementById('monthly_expenses').value = formatIndianNumber(75000);
+      document.getElementById('monthly_income').value = formatIndianNumber(0);
+    } else {
+      document.getElementById('networth').value = (10000000).toLocaleString('en-US');
+      document.getElementById('monthly_expenses').value = (75000).toLocaleString('en-US');
+      document.getElementById('monthly_income').value = (0).toLocaleString('en-US');
+    }
+    
+    // Update the projection table and chart with default values
+    updateProjectionTable();
   }
 
   // Fetch currencies from JSON file
@@ -93,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reformat the input fields based on the new currency
         const networthInput = document.getElementById('networth');
         const monthlyExpensesInput = document.getElementById('monthly_expenses');
+        const monthlyIncomeInput = document.getElementById('monthly_income');
 
         const formatInput = (input) => {
           const value = parseFloat(input.value.replace(/,/g, ''));
@@ -107,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         formatInput(networthInput);
         formatInput(monthlyExpensesInput);
+        formatInput(monthlyIncomeInput);
       }
 
       currencySelect.addEventListener('change', () => {
@@ -169,10 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Validate inputs
     const networth = parseFormattedNumber(document.getElementById('networth').value);
     const monthlyExpenses = parseFormattedNumber(document.getElementById('monthly_expenses').value);
+    const monthlyIncome = parseFormattedNumber(document.getElementById('monthly_income').value);
     const returnRate = parseFloat(document.getElementById('return_rate').value);
     const inflation = parseFloat(document.getElementById('inflation').value);
 
-    if (isNaN(networth) || isNaN(monthlyExpenses) || isNaN(returnRate) || isNaN(inflation)) {
+    if (isNaN(networth) || isNaN(monthlyExpenses) || isNaN(monthlyIncome) || isNaN(returnRate) || isNaN(inflation)) {
       alert('Please enter valid numbers for all fields.');
       return;
     }
@@ -194,7 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get input values and remove commas before parsing
     const initialNetworth = parseFloat(document.getElementById('networth').value.replace(/,/g, ''));
     const monthlyExpenses = parseFloat(document.getElementById('monthly_expenses').value.replace(/,/g, ''));
+    const monthlyIncome = parseFloat(document.getElementById('monthly_income').value.replace(/,/g, ''));
     const annualExpenses = monthlyExpenses * 12; // Calculate annual expenses
+    const annualIncome = monthlyIncome * 12; // Calculate annual income
     const returnRate = parseFloat(document.getElementById('return_rate').value) / 100;
     const inflation = parseFloat(document.getElementById('inflation').value) / 100;
 
@@ -204,18 +225,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentNetworth = initialNetworth;
     let currentWithdrawal = annualExpenses;
+    let currentIncome = annualIncome;
 
     const rows = [];
 
     for (let year = 1; year <= maxYears; year++) {
-      // Calculate networth after withdrawal and returns
-      currentNetworth = currentNetworth - currentWithdrawal;
+      // Calculate net cash flow (income - expenses)
+      const netCashFlow = currentIncome - currentWithdrawal;
+      
+      // Update networth based on cash flow
+      currentNetworth += netCashFlow;
       
       // If networth becomes negative, stop the projection
       if (currentNetworth < 0) {
         break;
       }
       
+      // Apply investment returns
       currentNetworth = currentNetworth * (1 + returnRate);
 
       const row = document.createElement('tr');
@@ -242,8 +268,9 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       rows.push(row);
 
-      // Increase withdrawal for next year due to inflation
+      // Increase withdrawal and income for next year due to inflation
       currentWithdrawal = currentWithdrawal * (1 + inflation);
+      currentIncome = currentIncome * (1 + inflation);
       
       // Add data point for chart
       labels.push(`Year ${year}`);
