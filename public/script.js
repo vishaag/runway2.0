@@ -49,7 +49,20 @@ document.addEventListener('DOMContentLoaded', () => {
           
           document.getElementById('return_rate').value = data.returnRate;
           document.getElementById('inflation').value = data.inflation;
-          document.getElementById('projectionTableBody').innerHTML = data.tableData || '';
+          
+          // Check if all required table columns are present
+          const requiredColumns = ['Year', 'Annual Income', 'Withdrawal', 'Networth'];
+          const tableHeader = document.querySelector('thead tr');
+          const existingColumns = Array.from(tableHeader.children).map(th => th.textContent.trim());
+          const allColumnsPresent = requiredColumns.every(col => existingColumns.includes(col));
+          
+          if (allColumnsPresent && data.tableData) {
+            document.getElementById('projectionTableBody').innerHTML = data.tableData;
+          } else {
+            console.log('Table structure has changed. Recreating projection table.');
+            updateProjectionTable();
+          }
+
           if (data.chartData) {
             createChart(data.chartData.labels, data.chartData.datasets[0].data);
           } else {
